@@ -22,7 +22,7 @@ public class TopDownCamera : MonoBehaviour
         HandleCamera();
     }
 
-    private void HandleCamera()
+    public void HandleCamera()
     {
         if (!target)
         {
@@ -31,18 +31,18 @@ public class TopDownCamera : MonoBehaviour
 
         // Build world position vector
         Vector3 worldPosition = (Vector3.forward * -distance) + (Vector3.up * height);
-        Debug.DrawLine(target.position, worldPosition, Color.red);
+        //Debug.DrawLine(target.position, worldPosition, Color.red);
 
         // Build our rotated vector
         Vector3 rotatedVector = Quaternion.AngleAxis(angle, Vector3.up) * worldPosition;
-        Debug.DrawLine(target.position, rotatedVector, Color.green);
+        //Debug.DrawLine(target.position, rotatedVector, Color.green);
 
         // Move our position
         Vector3 finalTargetPosition = target.position;
         finalTargetPosition.y += lookAtHeight;
 
         Vector3 finalPosition = finalTargetPosition + rotatedVector;
-        Debug.DrawLine(target.position, finalPosition, Color.blue);
+        //Debug.DrawLine(target.position, finalPosition, Color.blue);
 
         transform.position = Vector3.SmoothDamp(transform.position, finalPosition, ref refVelocity, smoothSpeed);
 
