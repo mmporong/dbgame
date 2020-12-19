@@ -68,6 +68,8 @@ public class TopDownCamera_SceneEditor : Editor
 
         targetCamera.HandleCamera();
 
+        // Lighting, Lighting prove
+
 
     }
 
