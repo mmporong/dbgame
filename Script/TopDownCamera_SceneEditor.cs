@@ -68,7 +68,9 @@ public class TopDownCamera_SceneEditor : Editor
 
         targetCamera.HandleCamera();
 
-        // Lighting, Lighting prove
+        // Lighting, Lighting probe
+
+        // Terrain, Windzone
 
 
     }
