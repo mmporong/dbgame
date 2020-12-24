@@ -15,7 +15,9 @@ public class EnemyController_New : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        stateMachine = new StateMachine<EnemyController_New>(this, new IdleState());
+        stateMachine.AddState(new MoveState());
+        stateMachine.AddState(new AttackState());
     }
 
     #endregion Unity Methods
