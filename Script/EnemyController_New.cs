@@ -20,5 +20,10 @@ public class EnemyController_New : MonoBehaviour
         stateMachine.AddState(new AttackState());
     }
 
+    private void Update()
+    {
+        float elapsedTime = Time.deltaTime * 0.1f;
+        stateMachine.Update(Time.deltaTime);
+    }
     #endregion Unity Methods
 }
