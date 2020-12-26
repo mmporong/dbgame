@@ -5,7 +5,7 @@ using UnityEngine;
 
 public abstract class State<T>
 {
-    protected StateMachine_New<T> stateMachine;
+    protected StateMachine<T> stateMachine;
     protected T context;
 
     public State()
@@ -13,10 +13,10 @@ public abstract class State<T>
 
     }
 
-    internal void SetStateMachineAndContext(StateMachine<T> stateMachine, T context)
+    internal void SetMachineAndContext(StateMachine<T> stateMachine, T context)
     {
         this.stateMachine = stateMachine;
-        this.context = ContentType;
+        this.context = context;
 
         OnInitialized();
     }
@@ -38,7 +38,7 @@ public abstract class State<T>
 
     }
 }
-public sealed class StateMachine_New<T>
+public sealed class StateMachine<T>
 {
     private T context;
 
@@ -73,7 +73,7 @@ public sealed class StateMachine_New<T>
 
     public void AddState(State<T> state)
     {
-        state.SetStateMachineAndContext(this, context);
+        state.SetMachineAndContext(this, context);
         states[state.GetType()] = state;
     }
 
@@ -85,7 +85,7 @@ public sealed class StateMachine_New<T>
     }
 
     // State 간 변경
-    public R ChangeState<R> where R : State<T>
+    public R ChangeState<R>() where R : State<T>
     {
         var newType = typeof(R);
         if (currentState.GetType() == newType)
