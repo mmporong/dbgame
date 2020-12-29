@@ -59,5 +59,15 @@ public class EnemyController_New : MonoBehaviour
 
         return target;
     }
+
+    private void OndrawGizmos()
+    {
+        OndrawGizmos.color = Color.green;
+        OndrawGizmos.DrawWireSphere(transform.position, viewRadius);
+
+        OndrawGizmos.color = Color.red;
+        OndrawGizmos.DrawWireSphere(transform.position, attackrRange);
+    }
+
     #endregion
 }
