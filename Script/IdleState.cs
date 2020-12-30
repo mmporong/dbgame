@@ -2,24 +2,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class IdleState : State<EnemyController_New>
+public class IdleState : State<EnemyController>
 {
     private Animator animator;
     private CharacterController controller;
 
-    protected int hasMove = Animator.StringToHash("Move");
-    protected int hasMoveSpeed = Animator.StringToHash("MoveSpeed");
+    private int hashMove = Animator.StringToHash("Move");
+    private int hashMoveSpeed = Animator.StringToHash("MoveSpeed");
 
     public override void OnInitialized()
     {
         animator = context.GetComponent<Animator>();
-        controller = context.GetComponent<CharacterController>;
+        controller = context.GetComponent<CharacterController>();
     }
 
     public override void OnEnter()
     {
         animator?.SetBool(hashMove, false);
-        animator?.SetFloat(hashMoveSpeed, 0);
+        animator.SetFloat(hashMoveSpeed, 0);
         controller?.Move(Vector3.zero);
     }
 

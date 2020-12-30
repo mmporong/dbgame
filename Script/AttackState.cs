@@ -2,35 +2,33 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AttackState : State_New<EnemyController_New>
+public class AttackState : State<EnemyController>
 {
-    public class AttackState_New : AttackState_New<EnemyController_New>
+    private Animator animator;
+
+    private int hashAttack = Animator.StringToHash("Attack");
+
+    public override void OnInitialized()
     {
-        private Animator animator;
+        animator = context.GetComponent<Animator>();
+    }
 
-        private int hashAttack = Animator.StringToHash("Attack");
-
-        public override void OnInitialized()
+    public override void OnEnter()
+    {
+        if (context.IsAvailableAttack)
         {
-            animator = context.GetComponent<animator>();
+            animator?.SetTrigger(hashAttack);
         }
-
-        public override void OnEnter()
+        else
         {
-            if (context.IsAvailableAttack)
-            {
-                animator?.SetTrigger(hashAttack);
-            } 
-            else
-            {
-                statMachine.ChangeState<IdleState_New>();
-
-            }
-        }
-
-        public override void Update(float deltaTime)
-        {
+            stateMachine.ChangeState<IdleState>();
 
         }
     }
+
+    public override void Update(float deltaTime)
+    {
+
+    }
 }
+

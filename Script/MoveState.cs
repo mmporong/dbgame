@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class MoveState : Statae_New<EnemyController_New>
+public class MoveState : State<EnemyController>
 {
     private Animator animator;
     private CharacterController controller;
@@ -43,14 +43,13 @@ public class MoveState : Statae_New<EnemyController_New>
 
         if (!enemy && agent.remainingDistance <= agent.stoppingDistance)
         {
-            stateMachine.ChangeState<IdleState_New>();
+            stateMachine.ChangeState<IdleState>();
         }
     }
 
     public override void OnExit()
     {
         animator?.SetBool(hashMove, false);
-        animator?.SetBool(hashMoveSpeed, 0f);
         agent.ResetPath();
     }
 
