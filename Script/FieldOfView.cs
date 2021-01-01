@@ -11,6 +11,8 @@ public class FieldOfView : MonoBehaviour
 
     public LayerMask targetMask;
     public LayerMask obstacleMask;
+    
+    // Happy new year
     // Start is called before the first frame update
     void Start()
     {
