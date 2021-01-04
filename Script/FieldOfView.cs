@@ -26,7 +26,7 @@ public class FieldOfView : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        FindVisibleTargets();
     }
 
     void FindVisibleTargets()
@@ -35,7 +35,25 @@ public class FieldOfView : MonoBehaviour
         nearestTarget = null;
         visibleTargets = Clear();
 
-        Collider[] targetInViewRadius = Physics.OverlapSphere(transform.position, viewRadius, targetMask);
-        
-    }
+        Collider[] targetsInViewRadius = Physics.OverlapSphere(transform.position, viewRadius, targetMask);
+        for (int i = 0; i< targetsInViewRadius.Length; i++)
+        {
+            Transform target = targetsInViewRadius[i].transform;
+
+            Vector3 dirToTarget = (target.position - transform.position).normalized;
+            if (Vector.Angle(transform.forward, dirToTarget) < viewAngle / 2)
+            {
+                float dstToTarget = Vector3.Distance(transform.position, target.position);
+                if (!Physics.Raycast(transform.position, dirToTarget, dstToTarget, obstacleMask))
+                {
+                    visibleTargets.Add(target);
+                    if (nearestTarget == null || (distanceToTarget > dstToTarget))
+                    {
+                        nearestTarget = target;
+                        distanceToTarget = dstToTarget;
+                    }
+                }
+            }
+
+        }
 }
