@@ -16,11 +16,13 @@ public class FieldOfView : MonoBehaviour
     private Transform nearestTarget;
     private float distanceToTarget = 0.0f;
 
+    public List<Transform> VisibleTargets => visibleTargets;
+
     // Happy new year2
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -33,15 +35,15 @@ public class FieldOfView : MonoBehaviour
     {
         distanceToTarget = 0.0f;
         nearestTarget = null;
-        visibleTargets = Clear();
+        visibleTargets.Clear();
 
         Collider[] targetsInViewRadius = Physics.OverlapSphere(transform.position, viewRadius, targetMask);
-        for (int i = 0; i< targetsInViewRadius.Length; i++)
+        for (int i = 0; i < targetsInViewRadius.Length; i++)
         {
             Transform target = targetsInViewRadius[i].transform;
 
             Vector3 dirToTarget = (target.position - transform.position).normalized;
-            if (Vector.Angle(transform.forward, dirToTarget) < viewAngle / 2)
+            if (Vector3.Angle(transform.forward, dirToTarget) < viewAngle / 2)
             {
                 float dstToTarget = Vector3.Distance(transform.position, target.position);
                 if (!Physics.Raycast(transform.position, dirToTarget, dstToTarget, obstacleMask))
@@ -56,4 +58,16 @@ public class FieldOfView : MonoBehaviour
             }
 
         }
+    }
+
+    public Vector3 DirFromAngle(float angleInDegrees, bool angleIsGlobal)
+    {
+        if (!angleIsGlobal)
+        {
+            angleInDegrees += transform.eulerAngles.y;
+
+        }
+
+        return new Vector3(Mathf.Sin(angleInDegrees * Mathf.Deg2Rad), 0, Mathf.Cos(angleInDegrees * Mathf.Deg2Rad));
+    }
 }
