@@ -7,11 +7,15 @@ public class EnemyController : MonoBehaviour
     #region Variables
     protected StateMachine<EnemyController> stateMachine;
     public StateMachine<EnemyController> StateMachine => stateMachine;
-         
-    public LayerMask targetMask;
-    public Transform target;
-    public float viewRadius;
+
+    private FieldOfView fov;
+
+    // FieldOfView 에서 처리
+    // public LayerMask targetMask;
+    // public Transform target;
+    // public float viewRadius;
     public float attackRange;
+    public Transform Target => fov?.NearestTarget;
 
     #endregion Variables
 
@@ -24,6 +28,8 @@ public class EnemyController : MonoBehaviour
         stateMachine = new StateMachine<EnemyController>(this, new IdleState());
         stateMachine.AddState(new MoveState());
         stateMachine.AddState(new AttackState());
+
+        fov = GetComponent<FieldOfView>();
     }
 
     private void Update()
@@ -38,37 +44,41 @@ public class EnemyController : MonoBehaviour
     {
         get
         {
-            if (!target)
+            if (!Target)
             {
                 return false;
             }
 
-            float distance = Vector3.Distance(transform.position, target.position);
+            float distance = Vector3.Distance(transform.position, Target.position);
             return (distance <= attackRange);
         }
     }
 
     public Transform SearchEnemy()
     {
-        target = null;
 
-        Collider[] targetInViewRadius = Physics.OverlapSphere(transform.position, viewRadius, targetMask);
-        if (targetInViewRadius.Length > 0)
-        {
-            target = targetInViewRadius[0].transform;
-        }
+        return Target;
+        
+        // FieldOfView 에서 처리
+        //target = null;
 
-        return target;
+        //Collider[] targetInViewRadius = Physics.OverlapSphere(transform.position, viewRadius, targetMask);
+        //if (targetInViewRadius.Length > 0)
+        //{
+        //    target = targetInViewRadius[0].transform;
+        //}
+
+        //return target;
     }
 
-    private void OndrawGizmos()
-    {
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, viewRadius);
+    //private void OndrawGizmos()
+    //{
+    //    Gizmos.color = Color.green;
+    //    Gizmos.DrawWireSphere(transform.position, viewRadius);
 
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, attackRange);
-    }
+    //    Gizmos.color = Color.red;
+    //    Gizmos.DrawWireSphere(transform.position, attackRange);
+    //}
 
     #endregion
 }
