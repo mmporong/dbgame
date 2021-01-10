@@ -17,6 +17,11 @@ public class EnemyController : MonoBehaviour
     public float attackRange;
     public Transform Target => fov?.NearestTarget;
 
+    public Transform[] waypoints;
+    [HideInInspector]
+    public Transform targetWaypoint = null;
+
+
     #endregion Variables
 
     #region Unity Methods
