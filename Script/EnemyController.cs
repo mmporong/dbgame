@@ -20,6 +20,8 @@ public class EnemyController : MonoBehaviour
     public Transform[] waypoints;
     [HideInInspector]
     public Transform targetWaypoint = null;
+    private int waypointIndex = 0;
+
 
 
     #endregion Variables
@@ -83,9 +85,18 @@ public class EnemyController : MonoBehaviour
     //    Gizmos.color = Color.green;
     //    Gizmos.DrawWireSphere(transform.position, viewRadius);
 
-    //    Gizmos.color = Color.red;
+    //    Gizmos.color   = Color.red;
     //    Gizmos.DrawWireSphere(transform.position, attackRange);
     //}
+    public Transform FindNextWaypoint()
+    {
+        targetWaypoint = null;
+        if (waypoints.Length > 0)
+        {
+            targetWaypoint = waypoints[waypointIndex];
+        }
 
-    #endregion
-}
+        waypointsIndex = (waypointIndex + 1) % waypoints.Length;
+        return targetWaypoint;
+        #endregion
+    }

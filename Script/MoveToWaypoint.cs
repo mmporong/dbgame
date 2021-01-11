@@ -21,9 +21,17 @@ public class MoveToWaypoints : State<EnemyController>
 
     public override void OnEnter()
     {
-        animator?.SetBool(hashMove, false);
-        animator.SetFloat(hashMoveSpeed, 0);
-        controller?.Move(Vector3.zero);
+        if (context.targetWaypoint == null)
+        {
+           context.FindNextWaypoint();
+        }
+        
+
+        if (context.targetWaypoint)
+        {
+            agent?.SetDestination(destination.position);
+            animator?.SetBool(hashMove, true);
+        }
     }
 
     public override void Update(float deltaTime)
@@ -40,11 +48,30 @@ public class MoveToWaypoints : State<EnemyController>
                 stateMachine.ChangeState<MoveState>();
             }
         }
+        else
+        {
+            if (!agent.pathPending && (agent.remainingDistance <= agent.stoppingDistance))
+            {
+                Transform nextDest = context.FindNextWaypoitint();
+                if (nextDest)
+                {
+                    agent.SetDestination(nextDest.position);
+                }
+
+                stateMachine.ChangeState<IdleState>();
+            }
+            else
+            {
+                controller.Move(agent.velocity * deltaTime);
+                animator.SetFloat(hashMoveSpeed, agent.velocity.magnitude / agent.speed, .1f, deltaTime);
+            }
+        }
     }
 
     public override void OnExit()
     {
-        
+        animator?.SetBool(hashMove, false);
+        agent.ResetPath();
     }
 
 }
