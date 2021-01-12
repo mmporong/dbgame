@@ -32,7 +32,10 @@ public class EnemyController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        stateMachine = new StateMachine<EnemyController>(this, new IdleState());
+        stateMachine = new StateMachine<EnemyController>(this, new MoveToWaypoint());
+        IdleState idleState = new IdleState();
+        idleState.isPatrol = true;
+        stateMachine.AddState(idleState);
         stateMachine.AddState(new MoveState());
         stateMachine.AddState(new AttackState());
 
