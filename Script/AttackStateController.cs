@@ -23,16 +23,27 @@ public class AttackStateController : MonoBehaviour
     }
     
     #region Helper Methods
+
+    public void OnStateOfAttackState()
+    {
+        IsInAttackState = true;
+        enterAttackHandler();
+    }
+    public void OnEndOfAttackState()
+    {
+        IsInAttackState = false;
+        exitAttackHandler();
+    }
     private void EnterAttackState()
     {
-
+     
     }
 
     private void ExitAttackState()
     {
 
     }
-
+   
     #endregion Helper Methods
 }
 
