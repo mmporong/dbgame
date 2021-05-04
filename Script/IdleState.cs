@@ -48,9 +48,9 @@ public class IdleState : State<EnemyController>
                 stateMachine.ChangeState<MoveState>();
             }
         }
-        else if (isPatrol && stateMachine.ElapsedTimeInstate > idleTime)
+        else if (isPatrol && stateMachine.ElapsedTimeInState > idleTime)
         {
-            stateMachine.ChangeState<MoveToWaypoint>();
+            stateMachine.ChangeState<MoveToWaypoints>();
         }
     }
 

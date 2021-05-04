@@ -9,6 +9,8 @@ public class MoveToWaypoints : State<EnemyController>
     private CharacterController controller;
     private NavMeshAgent agent;
 
+    private Transform targetWaypoint = null;
+
     private int hashMove = Animator.StringToHash("Move");
     private int hashMoveSpeed = Animator.StringToHash("MoveSpeed");
 
@@ -29,7 +31,7 @@ public class MoveToWaypoints : State<EnemyController>
 
         if (context.targetWaypoint)
         {
-            agent?.SetDestination(destination.position);
+            agent?.SetDestination(targetWaypoint.position);
             animator?.SetBool(hashMove, true);
         }
     }
@@ -52,7 +54,7 @@ public class MoveToWaypoints : State<EnemyController>
         {
             if (!agent.pathPending && (agent.remainingDistance <= agent.stoppingDistance))
             {
-                Transform nextDest = context.FindNextWaypoitint();
+                Transform nextDest = context.FindNextWaypoint();
                 if (nextDest)
                 {
                     agent.SetDestination(nextDest.position);

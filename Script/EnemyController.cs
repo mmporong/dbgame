@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyController : MonoBehaviour
+public class EnemyController : MonoBehaviour, IAttackable, IDamageable
 {
     #region Variables
     protected StateMachine<EnemyController> stateMachine;
@@ -32,12 +32,13 @@ public class EnemyController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        stateMachine = new StateMachine<EnemyController>(this, new MoveToWaypoint());
+        stateMachine = new StateMachine<EnemyController>(this, new MoveToWaypoints());
         IdleState idleState = new IdleState();
         idleState.isPatrol = true;
         stateMachine.AddState(idleState);
         stateMachine.AddState(new MoveState());
         stateMachine.AddState(new AttackState());
+        stateMachine.AddState(new DeadState());
 
         fov = GetComponent<FieldOfView>();
     }
@@ -68,7 +69,7 @@ public class EnemyController : MonoBehaviour
     {
 
         return Target;
-        
+
         //
         // FieldOfView에서 처리
 
@@ -99,7 +100,16 @@ public class EnemyController : MonoBehaviour
             targetWaypoint = waypoints[waypointIndex];
         }
 
-        waypointsIndex = (waypointIndex + 1) % waypoints.Length;
+        waypointIndex = (waypointIndex + 1) % waypoints.Length;
         return targetWaypoint;
         #endregion
     }
+
+    #region IAttackable interfaces
+    public AttackBehaviour CurrentAttackBehaviour
+    {
+        get;
+        private set;
+    }
+    #endregion IAttackable interfaces
+}

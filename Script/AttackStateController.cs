@@ -24,15 +24,15 @@ public class AttackStateController : MonoBehaviour
     
     #region Helper Methods
 
-    public void OnStateOfAttackState()
+    public void OnStartOfAttackState()
     {
         IsInAttackState = true;
-        enterAttackHandler();
+        enterAttackStateHandler();
     }
     public void OnEndOfAttackState()
     {
         IsInAttackState = false;
-        exitAttackHandler();
+        exitAttackStateHandler();
     }
     private void EnterAttackState()
     {
@@ -43,7 +43,11 @@ public class AttackStateController : MonoBehaviour
     {
 
     }
-   
+
+    public void OnCheckAttackCollider(int attackIndex)
+    {
+        GetComponent<IAttackable>()?.OnExecuteAttack(attackIndex);
+    }
     #endregion Helper Methods
 }
 
