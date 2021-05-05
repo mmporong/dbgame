@@ -8,14 +8,20 @@ public class EnemyController : MonoBehaviour, IAttackable, IDamageable
     protected StateMachine<EnemyController> stateMachine;
     public StateMachine<EnemyController> StateMachine => stateMachine;
 
-    private FieldOfView fov;
+    private FieldOfView fieldOfView;
+    public Transform projectileTransform;
+
+    [SerializeField]
+    private List<AttackBehaviour> attackBehaviours = new List<AttackBehaviour>();
+
 
     // FieldOfView 에서 처리
-    // public LayerMask targetMask;
-    // public Transform target;
+    public LayerMask TargetMask => fieldOfView.targetMask;
+    public Transform target => fieldOfView.NearestTarget;
+
     // public float viewRadius;
     public float attackRange;
-    public Transform Target => fov?.NearestTarget;
+    public Transform Target => fieldOfView?.NearestTarget;
 
     public Transform[] waypoints;
     [HideInInspector]
@@ -25,6 +31,7 @@ public class EnemyController : MonoBehaviour, IAttackable, IDamageable
 
 
     #endregion Variables
+
 
     #region Unity Methods
 
@@ -39,31 +46,38 @@ public class EnemyController : MonoBehaviour, IAttackable, IDamageable
         stateMachine.AddState(new MoveState());
         stateMachine.AddState(new AttackState());
         stateMachine.AddState(new DeadState());
+        InitAttackBehaviour();
 
-        fov = GetComponent<FieldOfView>();
+        fieldOfView = GetComponent<FieldOfView>();
     }
+
+
 
     private void Update()
     {
-        float elapsedTime = Time.deltaTime * 0.1f;
+        CheckAttackBehaviour();
+        float elapsedtime = Time.deltaTime * 0.1f;
         stateMachine.Update(Time.deltaTime);
     }
     #endregion Unity Methods
 
     #region Other Methods
-    public bool IsAvailableAttack
-    {
-        get
-        {
-            if (!Target)
-            {
-                return false;
-            }
 
-            float distance = Vector3.Distance(transform.position, Target.position);
-            return (distance <= attackRange);
-        }
-    }
+    public virtual bool IsAvailableAttack => false;
+
+    //public bool IsAvailableAttack
+    //{
+    //    get
+    //    {
+    //        if (!Target)
+    //        {
+    //            return false;
+    //        }
+
+    //        float distance = Vector3.Distance(transform.position, Target.position);
+    //        return (distance <= attackRange);
+    //    }
+    //}
 
     public Transform SearchEnemy()
     {
@@ -105,11 +119,54 @@ public class EnemyController : MonoBehaviour, IAttackable, IDamageable
         #endregion
     }
 
+    private void InitAttackBehaviour()
+    {
+        foreach (AttackBehaviour behaviour in attackBehaviours)
+        {
+            if (CurrentAttackBehaviour == null)
+            {
+                CurrentAttackBehaviour = behaviour;
+            }
+        
+            behaviour.targetMask = TargetMask;
+
+        }
+    }
+
+    private void CheckAttackBehaviour()
+    {
+        if (CurrentAttackBehaviour == null || !CurrentAttackBehaviour.IsAvailable)
+        {
+            CurrentAttackBehaviour = null;
+            
+            foreach(AttackBehaviour behaviour in attackBehaviours)
+            {
+                if (behaviour.IsAvailableAttack)
+                {
+                    if ((CurrentAttackBehaviour == null) || (CurrentAttackBehaviour.priority < behaviour.priority)) {
+                        CurrentAttackBehaviour = behaviour;
+
+                    }
+                }
+            }
+        }
+    }
+
     #region IAttackable interfaces
     public AttackBehaviour CurrentAttackBehaviour
     {
         get;
         private set;
     }
+
+    public void OnExecuteAttack(int attackIndex)
+    {
+        if (CurrentAttackBehaviour != null && Target != null)
+        {
+            CurrentAttackBehaviour.ExecuteAttack(Target.gameObject, projectilePoint);
+        }
+    }
     #endregion IAttackable interfaces
+
+
 }
