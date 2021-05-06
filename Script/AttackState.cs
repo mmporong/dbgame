@@ -5,19 +5,36 @@ using UnityEngine;
 public class AttackState : State<EnemyController>
 {
     private Animator animator;
+    private AttackStateController attackStateController;
+    private IAttackable attackable;
 
-    private int hashAttack = Animator.StringToHash("Attack");
+    protected int attackTriggerHash = Animator.StringToHash("AttackTrigger");
+    protected int attackIndexHash = Animator.StringToHash("AttackIndex");
 
     public override void OnInitialized()
     {
         animator = context.GetComponent<Animator>();
+        attackStateController = context.GetComponent<AttackStateController>();
+        attackable = context.GetComponent<IAttackable>();
     }
 
     public override void OnEnter()
     {
+        if(attackable == null || attackable.CurrentAttackBehaviour == null)
+        {
+            stateMachine.ChangeState<IdleState>();
+            return;
+        }
+
+        attackStateController.enterAttackStateHandler += OnEnterAttackState();
+        attackStateController.exitAttackStateHandler += OnExitAttackState();
+
+        animator?.SetInteger(attackIndexHash, attackable.CurrentAttackBehaviour.animationIndex);
+        animator?.SetTrigger(attackTriggerHash);
+
         if (context.IsAvailableAttack)
         {
-            animator?.SetTrigger(hashAttack);
+            animator?.SetTrigger(attackTriggerHash);
         }
         else
         {
@@ -26,8 +43,13 @@ public class AttackState : State<EnemyController>
         }
     }
 
-    public override void Update(float deltaTime)
+    public void OnEnterAttackState()
     {
+
+    }
+    public void OnExitAttackState()
+    {
+        stateMachine.ChangeState<IdleState>();
 
     }
 }

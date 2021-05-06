@@ -29,6 +29,8 @@ public abstract class AttackBehaviour : MonoBehaviour
     [HideInInspector]
     public LayerMask targetMask;
 
+    public bool IsAvailableAttack { get; internal set; }
+
     #endregion Variables
     // Start is called before the first frame update
     void Start()

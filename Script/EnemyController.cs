@@ -7,9 +7,16 @@ public class EnemyController : MonoBehaviour, IAttackable, IDamageable
     #region Variables
     protected StateMachine<EnemyController> stateMachine;
     public StateMachine<EnemyController> StateMachine => stateMachine;
-
     private FieldOfView fieldOfView;
+    private Animator animator;
+
+
     public Transform projectileTransform;
+    public Transform hitTransform;
+
+    public int maxHealth = 100;
+
+
 
     [SerializeField]
     private List<AttackBehaviour> attackBehaviours = new List<AttackBehaviour>();
@@ -32,6 +39,14 @@ public class EnemyController : MonoBehaviour, IAttackable, IDamageable
 
     #endregion Variables
 
+    #region Properties
+    public int health
+    {
+        get;
+        private set;
+    }
+    #endregion Properties
+
 
     #region Unity Methods
 
@@ -48,7 +63,11 @@ public class EnemyController : MonoBehaviour, IAttackable, IDamageable
         stateMachine.AddState(new DeadState());
         InitAttackBehaviour();
 
+        health = maxHealth;
+
         fieldOfView = GetComponent<FieldOfView>();
+        
+
     }
 
 
@@ -127,7 +146,7 @@ public class EnemyController : MonoBehaviour, IAttackable, IDamageable
             {
                 CurrentAttackBehaviour = behaviour;
             }
-        
+
             behaviour.targetMask = TargetMask;
 
         }
@@ -135,15 +154,16 @@ public class EnemyController : MonoBehaviour, IAttackable, IDamageable
 
     private void CheckAttackBehaviour()
     {
-        if (CurrentAttackBehaviour == null || !CurrentAttackBehaviour.IsAvailable)
+        if (CurrentAttackBehaviour == null || !CurrentAttackBehaviour.IsAlive)
         {
             CurrentAttackBehaviour = null;
-            
-            foreach(AttackBehaviour behaviour in attackBehaviours)
+
+            foreach (AttackBehaviour behaviour in attackBehaviours)
             {
-                if (behaviour.IsAvailableAttack)
+                if (behaviour.IsAlive)
                 {
-                    if ((CurrentAttackBehaviour == null) || (CurrentAttackBehaviour.priority < behaviour.priority)) {
+                    if ((CurrentAttackBehaviour == null) || (CurrentAttackBehaviour.priority < behaviour.priority))
+                    {
                         CurrentAttackBehaviour = behaviour;
 
                     }
@@ -168,5 +188,33 @@ public class EnemyController : MonoBehaviour, IAttackable, IDamageable
     }
     #endregion IAttackable interfaces
 
+    #region IDamagable interfaces     
+    bool IsAlive => health > 0;
+    
+
+    void TakeDamage(int damage, GameObject hitEffectPrefab) {
+        if (!IsAlive)
+        {
+            return;
+        }
+
+        health -= damage;
+
+        if (hitEffectPrefab)
+        {
+            Instantiate(hitEffectPrefab, hitTransform);
+        }
+
+        if (IsAlive)
+        {
+            animator?.SetTrigger(hitTriggerHash);
+        }
+        else
+        {
+            stateMachine.ChangeState<DeadState>;
+        }
+    }
+    
+    #endregion IDamagable interfaces
 
 }
